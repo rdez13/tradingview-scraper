@@ -1,5 +1,6 @@
 import unittest
 from unittest import mock
+from unittest.mock import patch
 from tradingview_scraper.symbols.stream.streamer import Streamer
 
 class TestStreamer(unittest.TestCase):
@@ -28,3 +29,21 @@ class TestStreamer(unittest.TestCase):
         
         with self.assertRaises(TimeoutError):
             _ = next(streamer.get_data())
+
+    # def test_invalid_indicator_id(self):
+    #     """Test handling of invalid indicator IDs."""
+    #     streamer = Streamer()
+        
+    #     # Mock fetch_indicator_metadata to return a structure even on failure
+    #     with patch('tradingview_scraper.symbols.stream.streamer.fetch_indicator_metadata') as mock_fetch:
+    #         mock_fetch.return_value = {"p": None}  # Simulating an error scenario
+            
+    #         with self.assertRaises(ValueError):
+    #             streamer.stream(exchange="BINANCE", symbol="BTCUSD", indicator_id="invalid_id", indicator_version="v1")
+
+    def test_incomplete_indicator_info(self):
+        """Test handling of incomplete indicator information."""
+        streamer = Streamer()
+        
+        with self.assertRaises(ValueError):
+            streamer.stream(exchange="BINANCE", symbol="BTCUSD", indicator_id="valid_id")

@@ -4,6 +4,10 @@ import os
 import sys
 import time
 import pytest
+import unittest
+from unittest import mock
+import requests
+from unittest.mock import patch
 
 path = str(os.getcwd())
 if path not in sys.path:
@@ -108,23 +112,41 @@ class TestIndicators:
         assert 'Stoch.K' in indicators['data']
         assert indicators['data']['RSI'] == 50.0
         assert indicators['data']['Stoch.K'] == 80.0
+    
 
-        @pytest.mark.parametrize("timeframe", ['1h', 'invalid'])
-        def test_timeframe_validation(timeframe):
-            indicators = Indicators()
-            
-            if timeframe == 'invalid':
-                with pytest.raises(ValueError):
-                    indicators._validate_timeframe(timeframe)
-            else:
-                assert indicators._validate_timeframe(timeframe) is None
+    # @pytest.mark.parametrize("timeframe", ['1h', 'invalid'])
+    # def test_timeframe_validation(timeframe):
+    #     indicators = Indicators()
+        
+    #     if timeframe == 'invalid':
+    #         with pytest.raises(ValueError):
+    #             indicators._validate_timeframe(timeframe)
+    #     else:
+    #         assert indicators._validate_timeframe(timeframe) is None
 
-        def test_export_functionality(mocker):
-            """Test the export functionality depending on export type."""
-            mocker.patch.object(Indicators, '_export')
-            indicators = Indicators(export_result=True, export_type='json')
-            
-            data = [{"status": "success", "data": {"RSI": 50.0}}]
-            indicators._export(data, "BTCUSD", "1d")
-            
-            indicators._export.assert_called_with(data, "BTCUSD", "1d")
+
+    # def test_export_functionality(mocker):
+    #     """Test the export functionality depending on export type."""
+    #     mocker.patch.object(Indicators, '_export')
+    #     indicators = Indicators(export_result=True, export_type='json')
+        
+    #     data = [{"status": "success", "data": {"RSI": 50.0}}]
+    #     indicators._export(data, "BTCUSD", "1d")
+        
+    #     indicators._export.assert_called_with(data, "BTCUSD", "1d")
+
+    # def test_unsupported_exchange(self):
+    #     """Test scraping with an unsupported exchange."""
+    #     indicators = Indicators()
+        
+    #     with self.assertRaises(ValueError):
+    #         indicators.scrape(exchange="UNSUPPORTED", symbol="BTCUSD", timeframe="1d")
+
+    # @mock.patch('requests.get')
+    # def test_request_failure_handling(self, mock_get):
+    #     """Test handling of HTTP request failures."""
+    #     mock_get.side_effect = requests.exceptions.RequestException("Connection error")
+    #     indicators = Indicators()
+        
+    #     result = indicators.scrape(exchange="BITSTAMP", symbol="BTCUSD")
+    #     self.assertEqual(result['status'], 'failed')

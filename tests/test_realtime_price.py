@@ -6,6 +6,8 @@ import time
 import unittest
 from websocket import WebSocketConnectionClosedException
 from unittest import mock
+from unittest.mock import patch
+import requests
 
 PATH = str(os.getcwd())
 if PATH not in sys.path:
@@ -82,6 +84,18 @@ class TestRealTimeData(unittest.TestCase):
         
         with self.assertRaises(ConnectionError):
             real_time_data.send_message("some_function", ["some_args"])
+
+            
+    def test_invalid_symbol_format(self):
+        """Test handling of invalid symbol formats."""
+        real_time_data = RealTimeData()
+        invalid_symbol = "INVALID:FORMAT"
+            
+        with self.assertRaises(ValueError):
+            real_time_data.validate_symbols(invalid_symbol)
+
+
+
 
 if __name__ == "__main__":
     unittest.main()

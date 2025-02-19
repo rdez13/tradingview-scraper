@@ -125,32 +125,6 @@ class TestIndicators:
 
     
 
-    # @pytest.mark.parametrize("timeframe", ['1h', 'invalid'])
-    # def test_timeframe_validation(timeframe):
-    #     indicators = Indicators()
-        
-    #     if timeframe == 'invalid':
-    #         with pytest.raises(ValueError):
-    #             indicators._validate_timeframe(timeframe)
-    #     else:
-    #         assert indicators._validate_timeframe(timeframe) is None
-
-
-    # def test_export_functionality(mocker):
-    #     """Test the export functionality depending on export type."""
-    #     mocker.patch.object(Indicators, '_export')
-    #     indicators = Indicators(export_result=True, export_type='json')
-        
-    #     data = [{"status": "success", "data": {"RSI": 50.0}}]
-    #     indicators._export(data, "BTCUSD", "1d")
-        
-    #     indicators._export.assert_called_with(data, "BTCUSD", "1d")
-
-    # def test_unsupported_exchange(self):
-    #     """Test scraping with an unsupported exchange."""
-    #     indicators = Indicators()
-        
-    #     with self.assertRaises(ValueError):
-    #         indicators.scrape(exchange="UNSUPPORTED", symbol="BTCUSD", timeframe="1d")
+   
 
    

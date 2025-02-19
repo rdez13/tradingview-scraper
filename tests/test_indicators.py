@@ -6,6 +6,7 @@ import time
 import pytest
 import unittest
 from unittest import mock
+from unittest.mock import patch
 import requests
 from unittest.mock import patch
 
@@ -17,6 +18,15 @@ from tradingview_scraper.symbols.technicals import Indicators
 
 
 class TestIndicators:
+    @patch('requests.get')
+    def test_request_failure_handling(self, mock_get):
+        """Test handling of HTTP request failures."""
+        mock_get.side_effect = requests.exceptions.RequestException("Connection error")
+        indicators = Indicators()
+        # Set allIndicators to True to avoid needing to specify indicators
+        result = indicators.scrape(exchange="BITSTAMP", symbol="BTCUSD", allIndicators=True)
+
+        assert result['status'] == 'failed', "Expected status to be 'failed'"
 
     def setup_method(self):
         """Setup method to create an Indicators instance."""
@@ -112,6 +122,7 @@ class TestIndicators:
         assert 'Stoch.K' in indicators['data']
         assert indicators['data']['RSI'] == 50.0
         assert indicators['data']['Stoch.K'] == 80.0
+
     
 
     # @pytest.mark.parametrize("timeframe", ['1h', 'invalid'])
@@ -142,11 +153,4 @@ class TestIndicators:
     #     with self.assertRaises(ValueError):
     #         indicators.scrape(exchange="UNSUPPORTED", symbol="BTCUSD", timeframe="1d")
 
-    # @mock.patch('requests.get')
-    # def test_request_failure_handling(self, mock_get):
-    #     """Test handling of HTTP request failures."""
-    #     mock_get.side_effect = requests.exceptions.RequestException("Connection error")
-    #     indicators = Indicators()
-        
-    #     result = indicators.scrape(exchange="BITSTAMP", symbol="BTCUSD")
-    #     self.assertEqual(result['status'], 'failed')
+   

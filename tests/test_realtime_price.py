@@ -4,6 +4,7 @@ import os
 import sys
 import time
 import unittest
+from websocket import WebSocketConnectionClosedException
 from unittest import mock
 
 PATH = str(os.getcwd())
@@ -58,6 +59,29 @@ class TestRealTimeData(unittest.TestCase):
                 self.assertIn("m", packet)
             else:
                 self.assertNotIn("m", packet)  # First packet should not have "m"
+
+    @mock.patch.object(RealTimeData, 'get_latest_trade_info')
+    def test_handle_websocket_reconnection(self, mock_get_latest_trade_info):
+        """Test the reconnection mechanism in the event of a WebSocket disconnection."""
+        # Simulate WebSocket disconnection
+        mock_get_latest_trade_info.side_effect = WebSocketConnectionClosedException
+        
+        # Try to fetch data
+        real_time_data = RealTimeData()
+        exchange_symbol = ["BINANCE:BTCUSDT"]
+        
+        with self.assertRaises(WebSocketConnectionClosedException):
+            _ = list(real_time_data.get_latest_trade_info(exchange_symbol=exchange_symbol))
+
+    @mock.patch.object(RealTimeData, 'send_message')
+    def test_send_message_failure(self, mock_send_message):
+        """Test handling of send_message failures."""
+        mock_send_message.side_effect = ConnectionError("Failed to send message")
+        
+        real_time_data = RealTimeData()
+        
+        with self.assertRaises(ConnectionError):
+            real_time_data.send_message("some_function", ["some_args"])
 
 if __name__ == "__main__":
     unittest.main()

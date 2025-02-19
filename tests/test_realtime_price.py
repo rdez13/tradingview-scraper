@@ -77,13 +77,15 @@ class TestRealTimeData(unittest.TestCase):
 
     @mock.patch.object(RealTimeData, 'send_message')
     def test_send_message_failure(self, mock_send_message):
-        """Test handling of send_message failures."""
         mock_send_message.side_effect = ConnectionError("Failed to send message")
-        
         real_time_data = RealTimeData()
+        function_name = "some_function"
+        args = ["some_args"]
         
         with self.assertRaises(ConnectionError):
-            real_time_data.send_message("some_function", ["some_args"])
+            real_time_data.send_message(function_name, args)
+        
+        mock_send_message.assert_called_once_with(function_name, args)
 
             
     def test_invalid_symbol_format(self):

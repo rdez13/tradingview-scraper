@@ -15,11 +15,17 @@ class TestStreamer(unittest.TestCase):
 
     @mock.patch('tradingview_scraper.symbols.stream.streamer.Streamer.get_data')
     def test_stream_data_handling(self, mock_get_data):
-        """Test data handling from WebSocket."""
-        mock_get_data.return_value = iter([{"p": [{"i": "123", "v": [1,2,3,4,5,6]}]}])
+        mock_get_data.return_value = iter([{ "p": [{ "i": "123", "v": [1,2,3,4,5,6] }] }])
+        
         streamer = Streamer()
         data = next(streamer.get_data())
+
         self.assertIn("p", data)
+        self.assertIsInstance(data["p"], list)
+        self.assertGreater(len(data["p"]), 0)
+        self.assertIn("i", data["p"][0])
+        self.assertIn("v", data["p"][0])
+        self.assertIsInstance(data["p"][0]["v"], list)
 
     @mock.patch.object(Streamer, 'get_data')
     def test_stream_timeout_handling(self, mock_get_data):
